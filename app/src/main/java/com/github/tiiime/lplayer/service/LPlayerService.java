@@ -10,10 +10,12 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.github.tiiime.lplayer.controller.PlayList;
 import com.github.tiiime.lplayer.model.MusicInfo;
 import com.github.tiiime.lplayer.tool.MediaController;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import static com.github.tiiime.lplayer.tool.MediaController.*;
 
@@ -24,6 +26,7 @@ public class LPlayerService extends Service {
     private static final String TAG = "LPlayerService";
 
 
+    private PlayList playList = new PlayList();
     private static MediaPlayer mediaPlayer = null;
     private static Uri nowPlaying = null;
     /**

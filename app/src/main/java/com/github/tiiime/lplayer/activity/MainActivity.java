@@ -25,6 +25,7 @@ import com.github.tiiime.lplayer.adapter.PlayListAdapter;
 import com.github.tiiime.lplayer.model.MusicInfo;
 import com.github.tiiime.lplayer.service.LPlayerService;
 import com.github.tiiime.lplayer.tool.MediaController;
+import com.github.tiiime.lplayer.tool.MusicDBHelper;
 
 import java.util.ArrayList;
 
@@ -37,6 +38,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private static final String TAG = "MainActivity_Debug";
 
     private Context mContext = null;
+    private MusicDBHelper db = null;
 
     private Toolbar toolbar = null;
     private SeekBar seekBar = null;
@@ -52,7 +54,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = this;
-
+        db = new MusicDBHelper(mContext);
+        db.findMusic();
         playlist = (ListView) findViewById(R.id.playlist);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         seekBar = (SeekBar) findViewById(R.id.seekbar);
@@ -68,29 +71,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         toolbar.setTitle("hello");
         setSupportActionBar(toolbar);
 
-        //获取音乐数据
-        ContentResolver cr = getContentResolver();
-        ArrayList<MusicInfo> music = new ArrayList<>();
-
-        if (cr != null) {
-            Cursor cursor = cr.query(
-                    MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                    null, null, null,
-                    MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
-
-            if (cursor != null && cursor.moveToFirst()) {
-                do {
-                    music.add(new MusicInfo(cursor));
-                } while (cursor.moveToNext());
-            }
-        }
-
-        for (MusicInfo m : music) {
-            Log.v(TAG, m.toString());
+        ArrayList<MusicInfo> music = db.getList(MusicDBHelper.ALL_MUSIC);
+        if (music == null){
+            music = new ArrayList<>();
         }
 
         //play list init
-        playlist.setAdapter(new PlayListAdapter(this, music));
+        playlist.setAdapter( new PlayListAdapter(this, music) );
         playlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

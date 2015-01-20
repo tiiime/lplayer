@@ -31,6 +31,9 @@ public class MusicInfo implements Serializable {
     }
 
 
+    public MusicInfo() {
+    }
+
     public MusicInfo(Cursor cursor) {
         String album = cursor.getString(cursor
                 .getColumnIndex(MediaStore.Audio.Media.ALBUM));
@@ -105,6 +108,6 @@ public class MusicInfo implements Serializable {
 
     @Override
     public String toString() {
-        return "song:"+song+" artist:"+artist+" album:"+album+" ";
+        return "song:"+song+" artist:"+artist+" album:"+album+" \nuri:"+uri;
     }
 }
