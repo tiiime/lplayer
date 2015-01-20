@@ -1,11 +1,13 @@
 package com.github.tiiime.lplayer.service;
 
 import android.app.IntentService;
+import android.app.Service;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 
 import com.github.tiiime.lplayer.model.MusicInfo;
@@ -18,11 +20,11 @@ import static com.github.tiiime.lplayer.tool.MediaController.*;
 /**
  *
  */
-public class LPlayerService extends IntentService {
+public class LPlayerService extends Service {
     private static final String TAG = "LPlayerService";
 
-    private static MediaPlayer mediaPlayer = null;
 
+    private static MediaPlayer mediaPlayer = null;
     private static Uri nowPlaying = null;
     /**
      * 0---->stop
@@ -31,94 +33,73 @@ public class LPlayerService extends IntentService {
      */
     private static int playStat = 0;
 
-    public LPlayerService() {
-        super(TAG);
+    @Override
+    public void onCreate() {
+        Log.v(TAG, "onCreate");
+        super.onCreate();
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.v(TAG, "onstartComm");
+        if (intent == null) {
+            stopSelf();
+            return super.onStartCommand(intent, flags, startId);
+        }
+
         Bundle b = intent.getExtras();
         String type = b.getString(INTENT_TYPE);
-        Log.v(TAG, "get type"+type);
+        Log.v(TAG, "get type" + type);
 
-        switch (type){
+        switch (type) {
             case INTENT_OPERATE:
                 mediaControl(b.getInt(INTENT_OPERATE));
                 break;
             case INTENT_MUSICINFO:
-                MusicInfo m = (MusicInfo)b.get(INTENT_MUSICINFO);
+                MusicInfo m = (MusicInfo) b.get(INTENT_MUSICINFO);
                 Log.v(TAG, "rec ----- " + m.getSong());
                 nowPlaying = Uri.parse(m.getUri());
-                start(nowPlaying);
+                MediaController.play(this, nowPlaying);
                 break;
         }
 
+        return START_STICKY;
     }
 
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
 
-    private void mediaControl(int operat){
+    private void mediaControl(int operat) {
 
-        switch (operat){
+        switch (operat) {
             case OPERATE_STOP://stop
-                stop();
+                MediaController.stop();
+                playStat = OPERATE_STOP;
                 break;
             case OPERATE_PLAY://play
-                if (playStat == -1){
-                    mediaPlayer.start();
+                if (playStat == OPERATE_PAUSE) {
+                    MediaController.resume();
+                } else {
+                    if (nowPlaying == null) return;
+                    MediaController.play(this, nowPlaying);
                 }
-                if (nowPlaying != null){
-                    start(nowPlaying);
-                }
+                playStat = OPERATE_PLAY;
                 break;
             case OPERATE_PAUSE://pause
-                if ( (mediaPlayer != null) && mediaPlayer.isPlaying()){
-                    mediaPlayer.pause();
-                    playStat = -1;
+                if (playStat == OPERATE_PLAY){
+                    MediaController.pause();
+                    playStat = OPERATE_PAUSE;
                 }
                 break;
         }
-    }
-    /**
-     * stop music
-     */
-    private void stop(){
-        playStat = 0;
 
-        if (mediaPlayer != null){
-            mediaPlayer.release();
-            mediaPlayer = null;
-            Log.v(TAG, "media release");
-        } else {
-            Log.v(TAG, "media is null");
-        }
     }
 
-    /**
-     * start play
-     * @param uri
-     */
-    private void start(Uri uri){
-        Log.v(TAG, "current thread id:"+Thread.currentThread().getId());
-
-        stop();
-
-        if (mediaPlayer == null) {
-            mediaPlayer = new MediaPlayer();
-        } else {
-            Log.v(TAG, "media not null");
-        }
-
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        try {
-            mediaPlayer.setDataSource(this, uri);
-            mediaPlayer.prepare();
-            mediaPlayer.start();
-            playStat = 1;
-        } catch (IOException e) {
-            e.printStackTrace();
-            playStat = 0;
-        }
-        Log.v(TAG, "play stat:"+playStat);
+    @Override
+    public void onDestroy() {
+        MediaController.release();
+        super.onDestroy();
     }
-
 }
