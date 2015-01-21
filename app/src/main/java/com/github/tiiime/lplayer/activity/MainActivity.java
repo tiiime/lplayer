@@ -21,7 +21,6 @@ import com.github.tiiime.lplayer.R;
 import com.github.tiiime.lplayer.adapter.PlayListAdapter;
 import com.github.tiiime.lplayer.controller.PlayListController;
 import com.github.tiiime.lplayer.model.MusicInfo;
-import com.github.tiiime.lplayer.model.PlayList;
 import com.github.tiiime.lplayer.service.LPlayerService;
 import com.github.tiiime.lplayer.tool.MediaController;
 import com.github.tiiime.lplayer.tool.MusicDBHelper;
@@ -38,7 +37,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private Context mContext = null;
     private MusicDBHelper dbHelper = null;
-    private ArrayList<MusicInfo> music;
+    private ArrayList<MusicInfo> all_music;
 
     private Toolbar toolbar = null;
     private SeekBar seekBar = null;
@@ -66,10 +65,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         last.setOnClickListener(this);
         next.setOnClickListener(this);
 
-        if (music == null) {
-            music = new ArrayList<>();
-        }
-
         //play list init
         playlist.setAdapter(new PlayListAdapter(this, PlayListController.getmPlaylist()));
 
@@ -80,9 +75,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 Toast.makeText(mContext, music.getSong(), Toast.LENGTH_SHORT)
                         .show();
 
+                //设置playlist位置
+                PlayListController.setPosition(i);
+
                 Intent intent = new Intent(mContext, LPlayerService.class);
                 intent.putExtra(MediaController.INTENT_TYPE,
-                        MediaController.INTENT_MUSICINFO);
+                        MediaController.INTENT_OPERATE);
+                intent.putExtra(MediaController.INTENT_OPERATE,
+                        MediaController.OPERATE_PLAY);
                 mContext.startService(intent);
                 //设置seekbar时间
                 seekBar.setMax(((int) music.getTime()) / 1000);
@@ -122,10 +122,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         dbHelper = new MusicDBHelper(mContext);
         dbHelper.findMusic();
 
-        music = dbHelper.getList(MusicDBHelper.ALL_MUSIC);
-        PlayListController.setPlaylist(music);
+        all_music = dbHelper.getList(MusicDBHelper.ALL_MUSIC);
+        PlayListController.setPlaylist(all_music);
 
-
+        //初始化控件
         playlist = (ListView) findViewById(R.id.playlist);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         seekBar = (SeekBar) findViewById(R.id.seekbar);
@@ -138,16 +138,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         toolbar.setTitle("hello");
         setSupportActionBar(toolbar);
-
-        MediaController.getMediaPlayer().setOnCompletionListener(
-                new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-            }
-        });
     }
 
     private Handler mHandler = new Handler();
+    //处理进度条
     private Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
@@ -162,7 +156,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         }
     };
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -190,6 +183,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     *
+     * @param view
+     */
     @Override
     public void onClick(View view) {
         Intent intent = new Intent(mContext, LPlayerService.class);

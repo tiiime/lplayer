@@ -5,7 +5,7 @@ import com.github.tiiime.lplayer.model.MusicInfo;
 import java.util.ArrayList;
 
 /**
- *
+ *控制播放顺序
  * Created by kang on 15/1/19.
  */
 public class PlayListController {
@@ -103,6 +103,10 @@ public class PlayListController {
 
     public static void setPlaylist(ArrayList<MusicInfo> list) {
         mPlaylist = (ArrayList<MusicInfo>) list.clone();
+    }
+
+    public static void setPosition(int position) {
+        PlayListController.position = position;
     }
 
     public static ArrayList<MusicInfo> getmPlaylist() {

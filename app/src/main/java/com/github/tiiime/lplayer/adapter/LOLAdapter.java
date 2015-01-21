@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 列表页面适配器
  * Created by kang on 15/1/21-上午10:51.
  */
 public class LOLAdapter extends ArrayAdapter<PlayList> {
@@ -24,9 +25,6 @@ public class LOLAdapter extends ArrayAdapter<PlayList> {
     public LOLAdapter(Context context, ArrayList<PlayList> objects) {
         super(context, 0, objects);
         inflater = LayoutInflater.from(context);
-        for (PlayList p : objects){
-            Log.v(TAG, "----------------:"+ p.getListName());
-        }
     }
 
     @Override
@@ -42,8 +40,6 @@ public class LOLAdapter extends ArrayAdapter<PlayList> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         PlayList list = getItem(position);
-        Log.v(TAG, "-----------list:" + list.get_id());
-        Log.v(TAG, "-----------list:" + list.getListName());
 
         viewHolder.id.setText(String.valueOf(list.get_id()));
         viewHolder.name.setText(list.getListName());

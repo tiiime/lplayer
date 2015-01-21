@@ -13,6 +13,7 @@ import com.github.tiiime.lplayer.model.MusicInfo;
 import java.util.List;
 
 /**
+ * 歌曲列表适配器
  * Created by kang on 15/1/19.
  */
 public class PlayListAdapter extends ArrayAdapter<MusicInfo>{

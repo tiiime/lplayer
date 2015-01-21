@@ -27,6 +27,8 @@ public class MediaController {
 
     public static final String INTENT_TYPE = "type";
     public static final String INTENT_OPERATE = "operate";
+
+    // intent直接接受uri时使用
     public static final String INTENT_MUSICINFO = "musicinfo";
 
     private static MediaPlayer mediaPlayer = new MediaPlayer();
@@ -99,7 +101,6 @@ public class MediaController {
             mediaPlayer = null;
         }
     }
-
 
     public static MediaPlayer getMediaPlayer() {
         return mediaPlayer;

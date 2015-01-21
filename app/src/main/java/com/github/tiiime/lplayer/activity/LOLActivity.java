@@ -19,6 +19,7 @@ public class LOLActivity extends BaseActivity {
     private Toolbar toolbar = null;
     private ListView listview = null;
     private MusicDBHelper dbHelper = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +37,6 @@ public class LOLActivity extends BaseActivity {
     }
 
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -51,9 +51,9 @@ public class LOLActivity extends BaseActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        switch (id){
+        switch (id) {
             case R.id.action_add:
-                CreatePlaylistDialog dialog=new CreatePlaylistDialog(this);
+                CreatePlaylistDialog dialog = new CreatePlaylistDialog(this);
                 dialog.show();
                 break;
             case R.id.action_edit:
@@ -66,6 +66,5 @@ public class LOLActivity extends BaseActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
 
 }

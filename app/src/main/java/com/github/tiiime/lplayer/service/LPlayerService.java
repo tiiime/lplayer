@@ -16,7 +16,7 @@ import com.github.tiiime.lplayer.tool.MediaController;
 import static com.github.tiiime.lplayer.tool.MediaController.*;
 
 /**
- *
+ * 播放后台service
  */
 public class LPlayerService extends Service {
     private static final String TAG = "LPlayerService";
@@ -51,7 +51,7 @@ public class LPlayerService extends Service {
                 mediaControl(b.getInt(INTENT_OPERATE));
                 break;
             case INTENT_MUSICINFO:
-                MediaController.play(this, PlayListController.getNow());
+//                MediaController.play(this, PlayListController.getNow());
                 break;
         }
 
