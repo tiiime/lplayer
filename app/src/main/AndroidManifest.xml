@@ -21,6 +21,12 @@
             android:name=".service.LPlayerService"
             android:exported="false" >
         </service>
+
+        <activity
+            android:name=".activity.LOLActivity"
+            android:label="@string/title_activity_lol" >
+
+        </activity>
     </application>
 
 </manifest>

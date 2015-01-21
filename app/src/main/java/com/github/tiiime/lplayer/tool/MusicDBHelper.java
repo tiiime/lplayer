@@ -9,6 +9,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 import com.github.tiiime.lplayer.model.MusicInfo;
+import com.github.tiiime.lplayer.model.PlayList;
 
 import java.util.ArrayList;
 
@@ -19,8 +20,8 @@ public class MusicDBHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "MusicDBHelper";
 
-    public static final String DB_NAME   = "music";
-    public static final String ALL_LIST  = "all_list";
+    public static final String DB_NAME = "music";
+    public static final String ALL_LIST = "all_list";
     public static final String ALL_MUSIC = "all_music";
     private static int version = 1;
 
@@ -49,26 +50,32 @@ public class MusicDBHelper extends SQLiteOpenHelper {
                         " album  TEXT   ," +
                         " uri    TEXT   ," +
                         " time   TNTEGER," +
-                        " size   INTEGER)";
+                        " size   INTEGER," +
+                        " status INTEGET)";
 
         String create_list_table = "create table " + ALL_LIST +
-                "( name TEXT)";
+                "( _id INTEGER PRIMARY KEY , name TEXT)";
 
         sqLiteDatabase.execSQL(create_list_table);
         sqLiteDatabase.execSQL(create_music_table);
-
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i2) {
-        String dropMusic = "drop table " + ALL_MUSIC;
-        String dropList  = "drop table " + ALL_LIST;
-        sqLiteDatabase.execSQL(dropMusic);
-        sqLiteDatabase.execSQL(dropList);
-        onCreate(sqLiteDatabase);
+
     }
 
-    public void findMusic(){
+    private void clear() {
+        String dropMusic = "drop table " + ALL_MUSIC;
+        String dropList = "drop table " + ALL_LIST;
+        getWritableDatabase().execSQL(dropMusic);
+        getWritableDatabase().execSQL(dropList);
+        onCreate(getWritableDatabase());
+    }
+
+    public void findMusic() {
+        clear();
+
         //获取音乐数据
         ContentResolver cr = mContext.getContentResolver();
         ArrayList<MusicInfo> music = new ArrayList<>();
@@ -89,11 +96,11 @@ public class MusicDBHelper extends SQLiteOpenHelper {
             }
         }
     }
+
     /**
      * add a music to db
      *
      * @param music
-     *
      */
     public void addMusic(MusicInfo music) {
         String sql = "insert into " + ALL_MUSIC + " values('" +
@@ -102,15 +109,21 @@ public class MusicDBHelper extends SQLiteOpenHelper {
                 music.getAlbum() + "','" +
                 music.getUri() + "'," +
                 music.getTime() + "," +
-                music.getSize() + ")";
+                music.getSize() + "," +
+                music.getStatus() + ")";
         getWritableDatabase().execSQL(sql);
     }
 
-    public ArrayList<MusicInfo> getList(String tableName){
+    /**
+     * 根据表名获取音乐
+     * @param tableName
+     * @return
+     */
+    public ArrayList<MusicInfo> getList(String tableName) {
         ArrayList<MusicInfo> arr = new ArrayList<>();
         String sql = "select * from " + tableName;
         Cursor cursor = getReadableDatabase().rawQuery(sql, null);
-        while (cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             MusicInfo music = new MusicInfo();
 
             music.setSong(cursor.getString(0));
@@ -119,26 +132,37 @@ public class MusicDBHelper extends SQLiteOpenHelper {
             music.setUri(cursor.getString(3));
             music.setTime(cursor.getInt(4));
             music.setSize(cursor.getInt(5));
-
+            music.setStatus(cursor.getInt(6));
             arr.add(music);
         }
         return arr;
     }
 
-    public ArrayList<String> getPlayLists(){
-        ArrayList<String> arr = null;
+    /**
+     * 获取所有List
+     * @return
+     */
+    public ArrayList<PlayList> getPlayLists() {
+        ArrayList<PlayList> arr = new ArrayList<>();
         String sql = "select * from " + ALL_LIST;
         Cursor cursor = getReadableDatabase().rawQuery(sql, null);
-        while(cursor.moveToNext()){
-            String name = cursor.getString(0);
-            arr.add(name);
+        while (cursor.moveToNext()) {
+            PlayList list = new PlayList();
+            list.set_id(cursor.getInt(0));
+            list.setListName(cursor.getString(1));
+            arr.add(list);
         }
+
         return arr;
     }
 
-    public void addPlayList(String name){
+    /**
+     * 添加 list
+     * @param name
+     */
+    public void addPlayList(String name) {
         String sql = "insert into " +
-                ALL_LIST +" values("+name+")";
+                ALL_LIST + " values( null, '" + name + "')";
         getWritableDatabase().execSQL(sql);
     }
 }

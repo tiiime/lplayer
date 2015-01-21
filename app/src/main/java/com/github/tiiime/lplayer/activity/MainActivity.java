@@ -53,6 +53,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Log.v(TAG, "activity onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         mContext = this;
         db = new MusicDBHelper(mContext);
         db.findMusic();
@@ -176,6 +177,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.action_playlist) {
+            Intent intent = new Intent(this, LOLActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);

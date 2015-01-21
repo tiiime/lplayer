@@ -18,6 +18,9 @@ public class MusicInfo implements Serializable {
     long time;
     long size;
 
+    int status;
+
+
     /**
      * test
      * @param song
@@ -56,6 +59,15 @@ public class MusicInfo implements Serializable {
         this.time = time;
         this.size = size;
         this.uri = uri;
+        this.status = 1;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public String getUri() {
