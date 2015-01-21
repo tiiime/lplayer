@@ -12,5 +12,7 @@
     <string name="action_add_playlist">add</string>
     <string name="action_del_playlist">del</string>
     <string name="action_edit_playlist">edit</string>
+    <string name="last">last</string>
+    <string name="next">next</string>
 
 </resources>

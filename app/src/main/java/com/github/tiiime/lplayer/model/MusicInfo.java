@@ -1,6 +1,7 @@
 package com.github.tiiime.lplayer.model;
 
 import android.database.Cursor;
+import android.net.Uri;
 import android.provider.MediaStore;
 
 import java.io.Serializable;
@@ -116,6 +117,10 @@ public class MusicInfo implements Serializable {
 
     public void setAlbum(String album) {
         this.album = album;
+    }
+
+    public Uri toUri(){
+        return Uri.parse(getUri());
     }
 
     @Override

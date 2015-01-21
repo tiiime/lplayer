@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.github.tiiime.lplayer.controller.PlayListController;
 import com.github.tiiime.lplayer.model.MusicInfo;
+import com.github.tiiime.lplayer.model.PlayList;
 import com.github.tiiime.lplayer.tool.MediaController;
 
 import static com.github.tiiime.lplayer.tool.MediaController.*;
@@ -19,11 +20,7 @@ import static com.github.tiiime.lplayer.tool.MediaController.*;
  */
 public class LPlayerService extends Service {
     private static final String TAG = "LPlayerService";
-
-
-    private PlayListController playListController = new PlayListController();
     private static MediaPlayer mediaPlayer = null;
-    private static Uri nowPlaying = null;
     /**
      * 0---->stop
      * 1---->playing
@@ -54,10 +51,7 @@ public class LPlayerService extends Service {
                 mediaControl(b.getInt(INTENT_OPERATE));
                 break;
             case INTENT_MUSICINFO:
-                MusicInfo m = (MusicInfo) b.get(INTENT_MUSICINFO);
-                Log.v(TAG, "rec ----- " + m.getSong());
-                nowPlaying = Uri.parse(m.getUri());
-                MediaController.play(this, nowPlaying);
+                MediaController.play(this, PlayListController.getNow());
                 break;
         }
 
@@ -68,6 +62,7 @@ public class LPlayerService extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
+
 
     private void mediaControl(int operat) {
 
@@ -80,8 +75,8 @@ public class LPlayerService extends Service {
                 if (playStat == OPERATE_PAUSE) {
                     MediaController.resume();
                 } else {
-                    if (nowPlaying == null) return;
-                    MediaController.play(this, nowPlaying);
+                    if (PlayListController.getNow() == null) return;
+                    MediaController.play(this, PlayListController.getNow());
                 }
                 playStat = OPERATE_PLAY;
                 break;
@@ -90,6 +85,14 @@ public class LPlayerService extends Service {
                     MediaController.pause();
                     playStat = OPERATE_PAUSE;
                 }
+                break;
+            case OPERATE_NEXT://
+                MusicInfo next = PlayListController.getNext();
+                MediaController.play(this,next);
+                break;
+            case OPERATE_LAST://
+                MusicInfo last = PlayListController.getLast();
+                MediaController.play(this,last);
                 break;
         }
 

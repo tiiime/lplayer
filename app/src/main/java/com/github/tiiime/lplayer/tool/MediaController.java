@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
 
+import com.github.tiiime.lplayer.model.MusicInfo;
+
 import java.io.IOException;
 
 /**
@@ -19,32 +21,30 @@ public class MediaController {
     public static final int OPERATE_STOP = 0;
     public static final int OPERATE_PAUSE = -1;
 
+    public static final int OPERATE_NEXT = 2;
+    public static final int OPERATE_LAST = 3;
+
+
     public static final String INTENT_TYPE = "type";
     public static final String INTENT_OPERATE = "operate";
     public static final String INTENT_MUSICINFO = "musicinfo";
 
-    private static MediaPlayer mediaPlayer = null;
-
-
-
-
+    private static MediaPlayer mediaPlayer = new MediaPlayer();
 
     /**
      * get mediaplayer
      * @return
      */
     private static MediaPlayer getPlayer(){
-        if (mediaPlayer == null) {
-            mediaPlayer = new MediaPlayer();
-        }
         return mediaPlayer;
     }
 
+
     /**
      *
-     * @param uri
+     * @param music
      */
-    public static void play(Context context,Uri uri){
+    public static void play(Context context,MusicInfo music){
 
         Log.v(TAG, "current thread id:" + Thread.currentThread().getId());
 //      if (mediaPlayer == null) {
@@ -56,7 +56,7 @@ public class MediaController {
         mediaPlayer = getPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         try {
-            mediaPlayer.setDataSource(context, uri);
+            mediaPlayer.setDataSource(context, music.toUri());
             mediaPlayer.prepare();
             mediaPlayer.start();
         } catch (IOException e) {
@@ -97,9 +97,9 @@ public class MediaController {
             mediaPlayer.stop();
             mediaPlayer.release();
             mediaPlayer = null;
-
         }
     }
+
 
     public static MediaPlayer getMediaPlayer() {
         return mediaPlayer;

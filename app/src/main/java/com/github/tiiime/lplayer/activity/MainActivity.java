@@ -1,13 +1,10 @@
 package com.github.tiiime.lplayer.activity;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -22,7 +19,9 @@ import android.widget.Toast;
 
 import com.github.tiiime.lplayer.R;
 import com.github.tiiime.lplayer.adapter.PlayListAdapter;
+import com.github.tiiime.lplayer.controller.PlayListController;
 import com.github.tiiime.lplayer.model.MusicInfo;
+import com.github.tiiime.lplayer.model.PlayList;
 import com.github.tiiime.lplayer.service.LPlayerService;
 import com.github.tiiime.lplayer.tool.MediaController;
 import com.github.tiiime.lplayer.tool.MusicDBHelper;
@@ -38,7 +37,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private static final String TAG = "MainActivity_Debug";
 
     private Context mContext = null;
-    private MusicDBHelper db = null;
+    private MusicDBHelper dbHelper = null;
+    private ArrayList<MusicInfo> music;
 
     private Toolbar toolbar = null;
     private SeekBar seekBar = null;
@@ -47,38 +47,32 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private Button play = null;//1
     private Button stop = null;//0
     private Button pause = null;//-1
+    private Button next = null;//2
+    private Button last = null;//3
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.v(TAG, "activity onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         mContext = this;
-        db = new MusicDBHelper(mContext);
-        db.findMusic();
-        playlist = (ListView) findViewById(R.id.playlist);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        seekBar = (SeekBar) findViewById(R.id.seekbar);
-        pause = (Button) findViewById(R.id.pause);
-        play = (Button) findViewById(R.id.play);
-        stop = (Button) findViewById(R.id.stop);
-        time = (TextView) findViewById(R.id.time);
+
+        init();
 
         pause.setOnClickListener(this);
         play.setOnClickListener(this);
         stop.setOnClickListener(this);
+        last.setOnClickListener(this);
+        next.setOnClickListener(this);
 
-        toolbar.setTitle("hello");
-        setSupportActionBar(toolbar);
-
-        ArrayList<MusicInfo> music = db.getList(MusicDBHelper.ALL_MUSIC);
-        if (music == null){
+        if (music == null) {
             music = new ArrayList<>();
         }
 
         //play list init
-        playlist.setAdapter( new PlayListAdapter(this, music) );
+        playlist.setAdapter(new PlayListAdapter(this, PlayListController.getmPlaylist()));
+
         playlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -89,7 +83,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 Intent intent = new Intent(mContext, LPlayerService.class);
                 intent.putExtra(MediaController.INTENT_TYPE,
                         MediaController.INTENT_MUSICINFO);
-                intent.putExtra(MediaController.INTENT_MUSICINFO, music);
                 mContext.startService(intent);
                 //设置seekbar时间
                 seekBar.setMax(((int) music.getTime()) / 1000);
@@ -105,9 +98,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 if (m != null && fromUser) {
                     m.seekTo(i * 1000);
                 }
-                int min = i  / 60;
-                int sec = i  % 60;
-                time.setText(min+":"+ (sec<10? "0"+sec : sec));
+                int min = i / 60;
+                int sec = i % 60;
+                time.setText(min + ":" + (sec < 10 ? "0" + sec : sec));
             }
 
             @Override
@@ -125,13 +118,43 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         reset();
     }
 
+    private void init() {
+        dbHelper = new MusicDBHelper(mContext);
+        dbHelper.findMusic();
+
+        music = dbHelper.getList(MusicDBHelper.ALL_MUSIC);
+        PlayListController.setPlaylist(music);
+
+
+        playlist = (ListView) findViewById(R.id.playlist);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        seekBar = (SeekBar) findViewById(R.id.seekbar);
+        pause = (Button) findViewById(R.id.pause);
+        play = (Button) findViewById(R.id.play);
+        stop = (Button) findViewById(R.id.stop);
+        last = (Button) findViewById(R.id.last);
+        next = (Button) findViewById(R.id.next);
+        time = (TextView) findViewById(R.id.time);
+
+        toolbar.setTitle("hello");
+        setSupportActionBar(toolbar);
+
+        MediaController.getMediaPlayer().setOnCompletionListener(
+                new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+            }
+        });
+    }
+
     private Handler mHandler = new Handler();
     private Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
             MediaPlayer mediaPlayer = MediaController.getMediaPlayer();
             if (mediaPlayer != null) {
-                int mCurrent = MediaController.getMediaPlayer().getCurrentPosition();
+                int mCurrent = MediaController.getMediaPlayer()
+                        .getCurrentPosition();
                 seekBar.setProgress(mCurrent / 1000);
 
             }
@@ -139,24 +162,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         }
     };
-
-    @Override
-    protected void onRestart() {
-        Log.v(TAG, "activity onRestart");
-        super.onRestart();
-    }
-
-    @Override
-    protected void onResume() {
-        Log.v(TAG, "activity onResume");
-        super.onResume();
-    }
-
-    @Override
-    protected void onDestroy() {
-        Log.v(TAG, "activity onDestory");
-        super.onDestroy();
-    }
 
 
     @Override
@@ -187,21 +192,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        Intent intent = null;
+        Intent intent = new Intent(mContext, LPlayerService.class);
+        intent.putExtra(MediaController.INTENT_TYPE, MediaController.INTENT_OPERATE);
 
         switch (view.getId()) {
 
             case R.id.play:
                 Log.v(TAG, "get play");
-                intent = new Intent(mContext, LPlayerService.class);
-                intent.putExtra(MediaController.INTENT_TYPE, MediaController.INTENT_OPERATE);
                 intent.putExtra(MediaController.INTENT_OPERATE, MediaController.OPERATE_PLAY);
                 mHandler.post(mRunnable);
                 break;
             case R.id.stop:
                 Log.v(TAG, "get stop");
-                intent = new Intent(mContext, LPlayerService.class);
-                intent.putExtra(MediaController.INTENT_TYPE, MediaController.INTENT_OPERATE);
                 intent.putExtra(MediaController.INTENT_OPERATE, MediaController.OPERATE_STOP);
 
                 //重置状态
@@ -209,10 +211,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.pause:
                 Log.v(TAG, "get pause");
-                intent = new Intent(mContext, LPlayerService.class);
-                intent.putExtra(MediaController.INTENT_TYPE, MediaController.INTENT_OPERATE);
+
                 intent.putExtra(MediaController.INTENT_OPERATE, MediaController.OPERATE_PAUSE);
                 mHandler.removeCallbacks(mRunnable);
+                break;
+            case R.id.last:
+                intent.putExtra(MediaController.INTENT_OPERATE, MediaController.OPERATE_LAST);
+                break;
+            case R.id.next:
+                intent.putExtra(MediaController.INTENT_OPERATE, MediaController.OPERATE_NEXT);
                 break;
         }
         mContext.startService(intent);
@@ -220,14 +227,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 
     /**
-     * 充值状态
+     * 重置播放状态
      */
     private void reset() {
         mHandler.removeCallbacks(mRunnable);
         seekBar.setProgress(0);
-
     }
-
 
 
 }
