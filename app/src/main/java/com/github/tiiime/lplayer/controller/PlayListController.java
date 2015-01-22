@@ -3,6 +3,7 @@ package com.github.tiiime.lplayer.controller;
 import com.github.tiiime.lplayer.model.MusicInfo;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  *控制播放顺序
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 public class PlayListController {
     //当前使用的播放列表
     private static ArrayList<MusicInfo> mPlaylist = null;
-    private static ArrayList<MusicInfo> tempQuene = new ArrayList<>();
+    private static LinkedList<Integer> tempQuene = new LinkedList<>();
 
     private static int position = 0;
 
@@ -23,16 +24,7 @@ public class PlayListController {
         mPlaylist.add(music);
     }
 
-    /**
-     * 移除列表中最后一个
-     * @param music
-     */
-    public static void removeOne(MusicInfo music){
-        int index = mPlaylist.lastIndexOf(music);
-        if (index >= 0){
-            mPlaylist.remove(index);
-        }
-    }
+
 
     /**
      * 上一曲
@@ -40,6 +32,8 @@ public class PlayListController {
      */
     public static MusicInfo getLast(){
         int get = 0;
+        //清空 or not清空 临时队列
+        tempQuene.clear();
 
         if (position <= 0){
             get = mPlaylist.size() - 1;
@@ -60,7 +54,11 @@ public class PlayListController {
      * @return music
      */
     public static MusicInfo getNext(){
-        int get = (position + 1) % mPlaylist.size();
+        Integer get = 0;
+        //判断temp列表中是否有在排队数据
+        if ( (get = tempQuene.poll() ) == null ){
+            get = (position + 1) % mPlaylist.size();
+        }
         position = get;
         return mPlaylist.get(position);
     }
@@ -112,4 +110,10 @@ public class PlayListController {
     public static ArrayList<MusicInfo> getmPlaylist() {
         return mPlaylist;
     }
+
+    public static void offerQuene(int position){
+        tempQuene.offer(position);
+    }
+
+
 }

@@ -21,6 +21,7 @@ import com.github.tiiime.lplayer.R;
 import com.github.tiiime.lplayer.adapter.PlayListAdapter;
 import com.github.tiiime.lplayer.controller.PlayListController;
 import com.github.tiiime.lplayer.model.MusicInfo;
+import com.github.tiiime.lplayer.model.PlayList;
 import com.github.tiiime.lplayer.service.LPlayerService;
 import com.github.tiiime.lplayer.tool.MediaController;
 import com.github.tiiime.lplayer.tool.MusicDBHelper;
@@ -67,7 +68,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //play list init
         playlist.setAdapter(new PlayListAdapter(this, PlayListController.getmPlaylist()));
-
+        //设置列表点击事件监听器
         playlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -87,6 +88,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 //设置seekbar时间
                 seekBar.setMax(((int) music.getTime()) / 1000);
                 mHandler.post(mRunnable);
+            }
+        });
+        //设置列表长按事件监听器
+        playlist.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Toast.makeText(mContext, "已加入播放队列", Toast.LENGTH_SHORT).show();
+                PlayListController.offerQuene(i);
+                return true;
             }
         });
 
