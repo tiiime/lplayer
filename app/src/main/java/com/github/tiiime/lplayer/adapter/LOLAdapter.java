@@ -21,9 +21,11 @@ import java.util.List;
 public class LOLAdapter extends ArrayAdapter<PlayList> {
     private static final String TAG = "loladapter";
     LayoutInflater inflater = null;
+    ArrayList<PlayList> playlist = null;
 
     public LOLAdapter(Context context, ArrayList<PlayList> objects) {
         super(context, 0, objects);
+        playlist = objects;
         inflater = LayoutInflater.from(context);
     }
 
@@ -55,6 +57,12 @@ public class LOLAdapter extends ArrayAdapter<PlayList> {
     @Override
     public int getCount() {
         return super.getCount();
+    }
+
+    public void refresh(ArrayList<PlayList> list){
+        playlist.clear();
+        playlist.addAll(list);
+        notifyDataSetChanged();
     }
 
     static class ViewHolder {

@@ -25,4 +25,9 @@ public class PlayList implements Serializable {
     public void set_id(int _id) {
         this._id = _id;
     }
+
+    @Override
+    public String toString() {
+        return "\n_id:" + _id + "name:" + listName;
+    }
 }

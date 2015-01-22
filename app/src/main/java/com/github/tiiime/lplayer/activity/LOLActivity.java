@@ -2,37 +2,49 @@ package com.github.tiiime.lplayer.activity;
 
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
 import com.github.tiiime.lplayer.R;
 import com.github.tiiime.lplayer.adapter.LOLAdapter;
+import com.github.tiiime.lplayer.model.MusicInfo;
+import com.github.tiiime.lplayer.model.PlayList;
 import com.github.tiiime.lplayer.tool.CreatePlaylistDialog;
 import com.github.tiiime.lplayer.tool.MusicDBHelper;
+
+import java.util.ArrayList;
 
 /**
  * List of List Activity
  */
 
 public class LOLActivity extends BaseActivity {
+    private static final String TAG = "LOLActivity";
     private Toolbar toolbar = null;
     private ListView listview = null;
     private MusicDBHelper dbHelper = null;
+    private ArrayList<PlayList> arr = null;
+    private LOLAdapter adapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lol);
-        dbHelper = new MusicDBHelper(this);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         listview = (ListView) findViewById(R.id.lol);
 
+        dbHelper = new MusicDBHelper(this);
+        arr = dbHelper.getPlayLists();
+        adapter = new LOLAdapter(this, arr);
+
+
         toolbar.setTitle("hello");
         setSupportActionBar(toolbar);
 
-        listview.setAdapter(new LOLAdapter(this, dbHelper.getPlayLists()));
+        listview.setAdapter(adapter);
 
     }
 
@@ -54,6 +66,16 @@ public class LOLActivity extends BaseActivity {
         switch (id) {
             case R.id.action_add:
                 CreatePlaylistDialog dialog = new CreatePlaylistDialog(this);
+                dialog.setOnSubmit(new CreatePlaylistDialog.OnSubmit() {
+                    @Override
+                    public void onSubmit() {
+                        arr = dbHelper.getPlayLists();
+                        for (PlayList p : arr) {
+                            Log.v(TAG, p.toString());
+                        }
+                        adapter.refresh(arr);
+                    }
+                });
                 dialog.show();
                 break;
             case R.id.action_edit:

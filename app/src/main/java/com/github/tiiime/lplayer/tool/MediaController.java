@@ -51,7 +51,6 @@ public class MediaController {
      */
     public static void play(Context context,MusicInfo music){
 
-        Log.v(TAG, "current thread id:" + Thread.currentThread().getId());
 //      if (mediaPlayer == null) {
 //          mediaPlayer = getPlayer();
 //      } else {

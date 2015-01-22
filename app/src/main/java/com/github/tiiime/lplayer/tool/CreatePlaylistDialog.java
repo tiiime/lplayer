@@ -14,13 +14,16 @@ import com.github.tiiime.lplayer.R;
  */
 public class CreatePlaylistDialog extends Dialog {
 
-    private Button button = null;
+    private Button submit = null;
+    private Button cancel = null;
     private EditText editText = null;
 
+    private OnSubmit onSubmit = null;
 
     Context context;
+
     public CreatePlaylistDialog(Context context) {
-        super(context);
+        super(context, R.style.dialog_create_playlist);
         this.context = context;
     }
 
@@ -28,15 +31,34 @@ public class CreatePlaylistDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.dialog_create_playlist);
-        button = (Button) findViewById(R.id.submit);
+        submit = (Button) findViewById(R.id.submit);
+        cancel = (Button) findViewById(R.id.cancel);
         editText = (EditText) findViewById(R.id.input);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 MusicDBHelper dbHelper = new MusicDBHelper(context);
                 dbHelper.addPlayList(editText.getText().toString());
+                if (onSubmit != null){
+                    onSubmit.onSubmit();
+                }
+                dismiss();
             }
         });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        });
+    }
+
+    public void setOnSubmit(OnSubmit onSubmit){
+        this.onSubmit = onSubmit;
+    }
+
+    public interface OnSubmit{
+        void onSubmit();
     }
 }

@@ -16,5 +16,7 @@
     <string name="next">next</string>
     <string name="hello_blank_fragment">hello</string>
     <string name="find">find</string>
+    <string name="cancel">cancel</string>
+    <string name="submit">submit</string>
 
 </resources>

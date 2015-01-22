@@ -113,14 +113,16 @@ public class MusicDBHelper extends SQLiteOpenHelper {
         contentValues.put("size", music.getSize());
         contentValues.put("status", music.getStatus());
 
-        getWritableDatabase().insert(ALL_MUSIC,null, contentValues);
+        getWritableDatabase().insert(ALL_MUSIC, null, contentValues);
     }
 
-    String convert(String str){
-        return str.replace("'","");
+    String convert(String str) {
+        return str.replace("'", "");
     }
+
     /**
      * 根据表名获取音乐
+     *
      * @param tableName
      * @return
      */
@@ -144,7 +146,8 @@ public class MusicDBHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * 获取所有List
+     * 获取所有playlist
+     *
      * @return
      */
     public ArrayList<PlayList> getPlayLists() {
@@ -162,12 +165,16 @@ public class MusicDBHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * 添加 list
+     * 添加 playlist
+     *
      * @param name
      */
     public void addPlayList(String name) {
-        String sql = "insert into " +
+        String add_playlist_index = "insert into " +
                 ALL_LIST + " values( null, '" + name + "')";
-        getWritableDatabase().execSQL(sql);
+        String add_playlist = "create table " + name;
+
+        getWritableDatabase().execSQL(add_playlist);
+        getWritableDatabase().execSQL(add_playlist_index);
     }
 }

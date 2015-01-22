@@ -3,14 +3,12 @@ package com.github.tiiime.lplayer.service;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
 import com.github.tiiime.lplayer.controller.PlayListController;
 import com.github.tiiime.lplayer.model.MusicInfo;
-import com.github.tiiime.lplayer.model.PlayList;
 import com.github.tiiime.lplayer.tool.MediaController;
 
 import static com.github.tiiime.lplayer.tool.MediaController.*;
@@ -21,6 +19,7 @@ import static com.github.tiiime.lplayer.tool.MediaController.*;
 public class LPlayerService extends Service {
     private static final String TAG = "LPlayerService";
     private static MediaPlayer mediaPlayer = null;
+    private static MusicInfo ing = new MusicInfo();
     /**
      * 0---->stop
      * 1---->playing
@@ -72,11 +71,15 @@ public class LPlayerService extends Service {
                 playStat = OPERATE_STOP;
                 break;
             case OPERATE_PLAY://play
-                if (playStat == OPERATE_PAUSE) {
-                    MediaController.resume();
-                } else {
-                    if (PlayListController.getNow() == null) return;
+                //将要播放的
+                MusicInfo m = PlayListController.getNow();
+                if (PlayListController.getNow() == null) return;
+
+                if (ing != m){
                     MediaController.play(this, PlayListController.getNow());
+                    ing = m;
+                } else if (playStat == OPERATE_PAUSE) {
+                    MediaController.resume();
                 }
                 playStat = OPERATE_PLAY;
                 break;

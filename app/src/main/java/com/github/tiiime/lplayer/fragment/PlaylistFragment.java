@@ -28,20 +28,20 @@ import com.github.tiiime.lplayer.tool.MusicDBHelper;
 public class PlaylistFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     private Context mContext = null;
-    private MusicDBHelper dbHelper = null;
+    private ListView listView = null;
     private OnItemClick onClick = null;
+    private MusicDBHelper dbHelper = null;
 
-    public interface OnItemClick{
+    public interface OnItemClick {
         void onItemClick();
     }
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -53,10 +53,6 @@ public class PlaylistFragment extends Fragment {
     // TODO: Rename and change types and number of parameters
     public static PlaylistFragment newInstance(String param1, String param2) {
         PlaylistFragment fragment = new PlaylistFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -67,16 +63,12 @@ public class PlaylistFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
         mContext = getActivity();
         dbHelper = new MusicDBHelper(mContext);
         PlayListController.setPlaylist(dbHelper.getList(MusicDBHelper.ALL_MUSIC));
     }
 
-    private ListView listView = null;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -104,7 +96,7 @@ public class PlaylistFragment extends Fragment {
                         MediaController.OPERATE_PLAY);
                 getActivity().startService(intent);
                 //设置seekbar时间
-                if (onClick != null){
+                if (onClick != null) {
                     onClick.onItemClick();
                 }
             }
@@ -121,6 +113,7 @@ public class PlaylistFragment extends Fragment {
 
         return view;
     }
+
 
     public void setOnClick(OnItemClick onClick) {
         this.onClick = onClick;
