@@ -14,5 +14,7 @@
     <string name="action_edit_playlist">edit</string>
     <string name="last">last</string>
     <string name="next">next</string>
+    <string name="hello_blank_fragment">hello</string>
+    <string name="find">find</string>
 
 </resources>

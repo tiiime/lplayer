@@ -10,18 +10,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.tiiime.lplayer.R;
-import com.github.tiiime.lplayer.adapter.PlayListAdapter;
 import com.github.tiiime.lplayer.controller.PlayListController;
+import com.github.tiiime.lplayer.fragment.PlaylistFragment;
 import com.github.tiiime.lplayer.model.MusicInfo;
-import com.github.tiiime.lplayer.model.PlayList;
 import com.github.tiiime.lplayer.service.LPlayerService;
 import com.github.tiiime.lplayer.tool.MediaController;
 import com.github.tiiime.lplayer.tool.MusicDBHelper;
@@ -37,23 +33,23 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private static final String TAG = "MainActivity_Debug";
 
     private Context mContext = null;
-    private MusicDBHelper dbHelper = null;
     private ArrayList<MusicInfo> all_music;
+    private PlaylistFragment playlistFragment = null;
 
     private Toolbar toolbar = null;
     private SeekBar seekBar = null;
-    private ListView playlist = null;
     private TextView time = null;
     private Button play = null;//1
     private Button stop = null;//0
     private Button pause = null;//-1
     private Button next = null;//2
     private Button last = null;//3
-
+    private Button find = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.v(TAG, "activity onCreate");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = this;
@@ -65,40 +61,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         stop.setOnClickListener(this);
         last.setOnClickListener(this);
         next.setOnClickListener(this);
+        find.setOnClickListener(this);
 
-        //play list init
-        playlist.setAdapter(new PlayListAdapter(this, PlayListController.getmPlaylist()));
-        //设置列表点击事件监听器
-        playlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                MusicInfo music = (MusicInfo) adapterView.getAdapter().getItem(i);
-                Toast.makeText(mContext, music.getSong(), Toast.LENGTH_SHORT)
-                        .show();
-
-                //设置playlist位置
-                PlayListController.setPosition(i);
-
-                Intent intent = new Intent(mContext, LPlayerService.class);
-                intent.putExtra(MediaController.INTENT_TYPE,
-                        MediaController.INTENT_OPERATE);
-                intent.putExtra(MediaController.INTENT_OPERATE,
-                        MediaController.OPERATE_PLAY);
-                mContext.startService(intent);
-                //设置seekbar时间
-                seekBar.setMax(((int) music.getTime()) / 1000);
-                mHandler.post(mRunnable);
-            }
-        });
-        //设置列表长按事件监听器
-        playlist.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(mContext, "已加入播放队列", Toast.LENGTH_SHORT).show();
-                PlayListController.offerQuene(i);
-                return true;
-            }
-        });
+//        seekBar.setMax(((int) music.getTime()) / 1000);
+//        mHandler.post(mRunnable);
 
         //set seekar
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -129,14 +95,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void init() {
-        dbHelper = new MusicDBHelper(mContext);
-        dbHelper.findMusic();
 
-        all_music = dbHelper.getList(MusicDBHelper.ALL_MUSIC);
-        PlayListController.setPlaylist(all_music);
 
         //初始化控件
-        playlist = (ListView) findViewById(R.id.playlist);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         seekBar = (SeekBar) findViewById(R.id.seekbar);
         pause = (Button) findViewById(R.id.pause);
@@ -145,9 +106,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         last = (Button) findViewById(R.id.last);
         next = (Button) findViewById(R.id.next);
         time = (TextView) findViewById(R.id.time);
+        find = (Button) findViewById(R.id.find);
 
         toolbar.setTitle("hello");
         setSupportActionBar(toolbar);
+
+        playlistFragment = (PlaylistFragment) getFragmentManager().
+                findFragmentById(R.id.playlist_fragment);
+        playlistFragment.setOnClick(new PlaylistFragment.OnItemClick() {
+            @Override
+            public void onItemClick() {
+                mHandler.postDelayed(mRunnable,1000);
+
+            }
+        });
     }
 
     private Handler mHandler = new Handler();
@@ -227,6 +199,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.next:
                 intent.putExtra(MediaController.INTENT_OPERATE, MediaController.OPERATE_NEXT);
+                break;
+            case R.id.find:
+                MusicDBHelper dbHelper = new MusicDBHelper(this);
+                dbHelper.findMusic();
+                PlayListController.setPlaylist(dbHelper.getList(MusicDBHelper.ALL_MUSIC));
                 break;
         }
         mContext.startService(intent);

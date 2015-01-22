@@ -69,5 +69,10 @@
             android:layout_height="wrap_content"
             android:text="@string/next" />
     </LinearLayout>
+    <Button
+        android:text="@string/find"
+        android:id="@+id/find"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </LinearLayout>
 

@@ -1,6 +1,7 @@
 package com.github.tiiime.lplayer.tool;
 
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -103,17 +104,21 @@ public class MusicDBHelper extends SQLiteOpenHelper {
      * @param music
      */
     public void addMusic(MusicInfo music) {
-        String sql = "insert into " + ALL_MUSIC + " values('" +
-                music.getSong() + "','" +
-                music.getArtist() + "','" +
-                music.getAlbum() + "','" +
-                music.getUri() + "'," +
-                music.getTime() + "," +
-                music.getSize() + "," +
-                music.getStatus() + ")";
-        getWritableDatabase().execSQL(sql);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("song", music.getSong());
+        contentValues.put("artist", music.getArtist());
+        contentValues.put("album", music.getAlbum());
+        contentValues.put("uri", music.getUri());
+        contentValues.put("time", music.getTime());
+        contentValues.put("size", music.getSize());
+        contentValues.put("status", music.getStatus());
+
+        getWritableDatabase().insert(ALL_MUSIC,null, contentValues);
     }
 
+    String convert(String str){
+        return str.replace("'","");
+    }
     /**
      * 根据表名获取音乐
      * @param tableName

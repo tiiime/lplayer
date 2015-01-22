@@ -63,4 +63,5 @@ public class PlayListAdapter extends ArrayAdapter<MusicInfo>{
         TextView album;
         TextView artist;
     }
+
 }

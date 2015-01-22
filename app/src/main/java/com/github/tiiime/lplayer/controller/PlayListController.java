@@ -16,7 +16,6 @@ public class PlayListController {
 
     private static int position = 0;
 
-
     private PlayListController(){
     }
 
@@ -101,13 +100,18 @@ public class PlayListController {
 
     public static void setPlaylist(ArrayList<MusicInfo> list) {
         mPlaylist = (ArrayList<MusicInfo>) list.clone();
+
+
     }
 
     public static void setPosition(int position) {
         PlayListController.position = position;
     }
 
-    public static ArrayList<MusicInfo> getmPlaylist() {
+    public static ArrayList<MusicInfo> getPlaylist() {
+        if (mPlaylist == null) {
+            mPlaylist =new ArrayList<>();
+        }
         return mPlaylist;
     }
 

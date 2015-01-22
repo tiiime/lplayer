@@ -38,6 +38,9 @@ public class MediaController {
      * @return
      */
     private static MediaPlayer getPlayer(){
+        if (mediaPlayer == null){
+            mediaPlayer = new MediaPlayer() ;
+        }
         return mediaPlayer;
     }
 
