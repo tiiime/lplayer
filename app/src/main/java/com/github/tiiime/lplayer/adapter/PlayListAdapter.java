@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.github.tiiime.lplayer.R;
@@ -18,6 +19,7 @@ import java.util.List;
  */
 public class PlayListAdapter extends ArrayAdapter<MusicInfo>{
     LayoutInflater inflater = null;
+    private boolean showCheckBox = false;
 
     public PlayListAdapter(Context context, List<MusicInfo> objects) {
         super(context, 0, objects);
@@ -34,6 +36,8 @@ public class PlayListAdapter extends ArrayAdapter<MusicInfo>{
             holder.song = (TextView)convertView.findViewById(R.id.song);
             holder.album = (TextView)convertView.findViewById(R.id.album);
             holder.artist = (TextView)convertView.findViewById(R.id.artist);
+            holder.checkBox = (CheckBox)convertView.findViewById(R.id.checkbox);
+
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -44,6 +48,11 @@ public class PlayListAdapter extends ArrayAdapter<MusicInfo>{
         holder.song.setText(music.getSong());
         holder.album.setText(music.getAlbum());
         holder.artist.setText(music.getArtist());
+        if (showCheckBox) {
+            holder.checkBox.setVisibility(View.VISIBLE);
+        } else {
+            holder.checkBox.setVisibility(View.INVISIBLE);
+        }
 
         return convertView;
     }
@@ -62,6 +71,31 @@ public class PlayListAdapter extends ArrayAdapter<MusicInfo>{
         TextView song;
         TextView album;
         TextView artist;
+        CheckBox checkBox;
+    }
+
+    /**
+     * 显示checkbox
+     */
+    public void showCheckBox(){
+                showCheckBox = true;
+        notifyDataSetChanged();
+    }
+
+    /**
+     * 隐藏checkbox
+     */
+    public void hideCheckBox(){
+        showCheckBox = false;
+        notifyDataSetChanged();
+    }
+
+    /**
+     * 当前是否显示checkbox
+     * @return
+     */
+    public boolean isShowCheckBox() {
+        return showCheckBox;
     }
 
 }

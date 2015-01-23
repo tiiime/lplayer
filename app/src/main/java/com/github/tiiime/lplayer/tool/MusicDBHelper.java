@@ -172,7 +172,14 @@ public class MusicDBHelper extends SQLiteOpenHelper {
     public void addPlayList(String name) {
         String add_playlist_index = "insert into " +
                 ALL_LIST + " values( null, '" + name + "')";
-        String add_playlist = "create table " + name;
+        String add_playlist = "create table " + name +
+                "(song   TEXT   ," +
+                " artist TEXT   ," +
+                " album  TEXT   ," +
+                " uri    TEXT   ," +
+                " time   TNTEGER," +
+                " size   INTEGER," +
+                " status INTEGET)";
 
         getWritableDatabase().execSQL(add_playlist);
         getWritableDatabase().execSQL(add_playlist_index);

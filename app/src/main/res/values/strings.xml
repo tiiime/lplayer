@@ -18,5 +18,9 @@
     <string name="find">find</string>
     <string name="cancel">cancel</string>
     <string name="submit">submit</string>
+    <string name="song">song</string>
+    <string name="artist">artist</string>
+    <string name="album">album</string>
+    <string name="add_to_list">add_to_list</string>
 
 </resources>
