@@ -51,7 +51,7 @@ public class ControlFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mContext = getActivity();
-        
+
         View view = inflater.inflate(R.layout.fragment_control, container, false);
         initView(view);
         return view;

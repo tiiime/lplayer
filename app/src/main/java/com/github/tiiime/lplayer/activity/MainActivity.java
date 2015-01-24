@@ -100,10 +100,7 @@ public class MainActivity extends BaseActivity {
         } else if (id == R.id.action_playlist) {
             Intent intent = new Intent(this, LOLActivity.class);
             startActivity(intent);
-        } else if (id == R.id.add_to_playlist) {
-            playlistFragment.getAdapter().showCheckBox();
         }
-
         return super.onOptionsItemSelected(item);
     }
 

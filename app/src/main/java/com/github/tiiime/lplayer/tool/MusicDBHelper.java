@@ -99,11 +99,20 @@ public class MusicDBHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * add a music to db
+     * add a music to all_music_db
      *
      * @param music
      */
     public void addMusic(MusicInfo music) {
+        addMusic(music, ALL_MUSIC);
+    }
+
+    /**
+     * add a music to all_music_db
+     * @param music
+     * @param playlist
+     */
+    public void addMusic(MusicInfo music, String playlist){
         ContentValues contentValues = new ContentValues();
         contentValues.put("song", music.getSong());
         contentValues.put("artist", music.getArtist());
@@ -113,7 +122,14 @@ public class MusicDBHelper extends SQLiteOpenHelper {
         contentValues.put("size", music.getSize());
         contentValues.put("status", music.getStatus());
 
-        getWritableDatabase().insert(ALL_MUSIC, null, contentValues);
+        getWritableDatabase().insert(playlist, null, contentValues);
+    }
+
+    public void addMuisc(ArrayList<MusicInfo> arr, String playlist){
+        if (arr == null) return;;
+        for (MusicInfo m : arr){
+            addMusic(m,playlist);
+        }
     }
 
     String convert(String str) {

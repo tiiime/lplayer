@@ -8,10 +8,9 @@ import android.view.MenuItem;
 import android.widget.ListView;
 
 import com.github.tiiime.lplayer.R;
-import com.github.tiiime.lplayer.adapter.LOLAdapter;
-import com.github.tiiime.lplayer.model.MusicInfo;
+import com.github.tiiime.lplayer.adapter.PlaylistAdapter;
 import com.github.tiiime.lplayer.model.PlayList;
-import com.github.tiiime.lplayer.tool.CreatePlaylistDialog;
+import com.github.tiiime.lplayer.dialog.CreatePlaylistDialog;
 import com.github.tiiime.lplayer.tool.MusicDBHelper;
 
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ public class LOLActivity extends BaseActivity {
     private ListView listview = null;
     private MusicDBHelper dbHelper = null;
     private ArrayList<PlayList> arr = null;
-    private LOLAdapter adapter = null;
+    private PlaylistAdapter adapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +37,7 @@ public class LOLActivity extends BaseActivity {
 
         dbHelper = new MusicDBHelper(this);
         arr = dbHelper.getPlayLists();
-        adapter = new LOLAdapter(this, arr);
+        adapter = new PlaylistAdapter(this, arr);
 
 
         toolbar.setTitle("hello");

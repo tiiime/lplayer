@@ -1,4 +1,4 @@
-package com.github.tiiime.lplayer.tool;
+package com.github.tiiime.lplayer.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.github.tiiime.lplayer.R;
+import com.github.tiiime.lplayer.tool.MusicDBHelper;
 
 /**
  * Created by kang on 15/1/21-上午11:40.
@@ -40,7 +41,7 @@ public class CreatePlaylistDialog extends Dialog {
             public void onClick(View view) {
                 MusicDBHelper dbHelper = new MusicDBHelper(context);
                 dbHelper.addPlayList(editText.getText().toString());
-                if (onSubmit != null){
+                    if (onSubmit != null){
                     onSubmit.onSubmit();
                 }
                 dismiss();
