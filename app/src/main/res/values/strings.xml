@@ -22,5 +22,6 @@
     <string name="artist">artist</string>
     <string name="album">album</string>
     <string name="add_to_list">add_to_list</string>
+    <string name="title_activity_list">ListActivity</string>
 
 </resources>

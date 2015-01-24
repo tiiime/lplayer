@@ -1,10 +1,14 @@
 package com.github.tiiime.lplayer.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.github.tiiime.lplayer.R;
@@ -27,10 +31,13 @@ public class LOLActivity extends BaseActivity {
     private ArrayList<PlayList> arr = null;
     private PlaylistAdapter adapter = null;
 
+    private Context mContext = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lol);
+        mContext = this;
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         listview = (ListView) findViewById(R.id.lol);
@@ -44,6 +51,14 @@ public class LOLActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
         listview.setAdapter(adapter);
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(mContext, ListActivity.class);
+                intent.putExtra("ListName", adapter.getItem(i).getListName());
+                startActivity(intent);
+            }
+        });
 
     }
 

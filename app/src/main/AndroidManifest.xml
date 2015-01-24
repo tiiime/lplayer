@@ -25,7 +25,10 @@
         <activity
             android:name=".activity.LOLActivity"
             android:label="@string/title_activity_lol" >
-
+        </activity>
+        <activity
+            android:name=".activity.ListActivity"
+            android:label="@string/title_activity_list" >
         </activity>
     </application>
 
