@@ -1,29 +1,17 @@
 package com.github.tiiime.lplayer.activity;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.animation.AccelerateInterpolator;
-import android.widget.Button;
-import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.github.tiiime.lplayer.R;
-import com.github.tiiime.lplayer.controller.PlayListController;
 import com.github.tiiime.lplayer.fragment.ControlFragment;
+import com.github.tiiime.lplayer.fragment.MusiclistFragment;
 import com.github.tiiime.lplayer.fragment.PlaylistFragment;
 import com.github.tiiime.lplayer.model.MusicInfo;
-import com.github.tiiime.lplayer.service.LPlayerService;
-import com.github.tiiime.lplayer.tool.MediaController;
-import com.github.tiiime.lplayer.tool.MusicDBHelper;
 
 import java.util.ArrayList;
 
@@ -37,6 +25,7 @@ public class MainActivity extends BaseActivity {
 
     private Context mContext = null;
     private ArrayList<MusicInfo> all_music;
+    private MusiclistFragment musiclistFragment = null;
     private PlaylistFragment playlistFragment = null;
     private ControlFragment controlFragment = null;
 
@@ -64,12 +53,16 @@ public class MainActivity extends BaseActivity {
         toolbar.setTitle("hello");
         setSupportActionBar(toolbar);
 
-        playlistFragment = (PlaylistFragment) getFragmentManager().
-                findFragmentById(R.id.playlist_fragment);
+        musiclistFragment = new MusiclistFragment();
+        playlistFragment = new PlaylistFragment();
+
+        getFragmentManager().beginTransaction().
+                add(R.id.fragment_container, musiclistFragment).commit();
+
         controlFragment = (ControlFragment) getFragmentManager().
                 findFragmentById(R.id.control);
 
-        playlistFragment.setOnClick(new PlaylistFragment.OnItemClick() {
+        musiclistFragment.setOnClick(new MusiclistFragment.OnItemClick() {
             @Override
             public void onItemClick() {
                 controlFragment.startPlay();
@@ -98,8 +91,12 @@ public class MainActivity extends BaseActivity {
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.action_playlist) {
-            Intent intent = new Intent(this, LOLActivity.class);
-            startActivity(intent);
+//            Intent intent = new Intent(this, LOLActivity.class);
+//            startActivity(intent);
+            getFragmentManager().beginTransaction().
+                    replace(R.id.fragment_container, playlistFragment)
+                    .addToBackStack(null).commit();
+
         }
         return super.onOptionsItemSelected(item);
     }

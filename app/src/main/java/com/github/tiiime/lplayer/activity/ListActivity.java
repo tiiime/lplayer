@@ -1,5 +1,6 @@
 package com.github.tiiime.lplayer.activity;
 
+import android.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -8,6 +9,7 @@ import android.widget.ListView;
 
 import com.github.tiiime.lplayer.R;
 import com.github.tiiime.lplayer.adapter.MusicInfoAdapter;
+import com.github.tiiime.lplayer.fragment.MusiclistFragment;
 import com.github.tiiime.lplayer.model.MusicInfo;
 import com.github.tiiime.lplayer.tool.MusicDBHelper;
 
@@ -21,16 +23,13 @@ public class ListActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+        Fragment fragment = new MusiclistFragment();
         Bundle b = getIntent().getExtras();
-        String name = b.getString("ListName");
-        dbHelper = new MusicDBHelper(this);
-        list = (ListView) findViewById(R.id.list);
+        fragment.setArguments(b);
 
-        ArrayList<MusicInfo> arr = dbHelper.getList(name);
-        adapter = new MusicInfoAdapter(this, arr);
-
-        list.setAdapter(adapter);
-        
+        getFragmentManager().beginTransaction()
+                .add(R.id.list_container, fragment)
+                .addToBackStack(null).commit();
 
     }
 

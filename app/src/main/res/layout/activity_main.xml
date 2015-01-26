@@ -13,7 +13,6 @@
         android:background="@android:color/transparent"
         app:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
 
-
     <fragment
         android:id="@+id/control"
         android:name="com.github.tiiime.lplayer.fragment.ControlFragment"
@@ -22,14 +21,13 @@
         android:layout_alignParentBottom="true"
         tools:layout="@layout/fragment_control" />
 
-    <fragment
-        android:id="@+id/playlist_fragment"
-        android:name="com.github.tiiime.lplayer.fragment.PlaylistFragment"
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/control"
-        android:layout_below="@id/toolbar"
-        tools:layout="@layout/fragment_playlist" />
+        android:layout_below="@id/toolbar" />
+
 
 </RelativeLayout>
 
