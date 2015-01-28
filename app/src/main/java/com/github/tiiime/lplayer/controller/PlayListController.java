@@ -4,6 +4,7 @@ import com.github.tiiime.lplayer.model.MusicInfo;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Random;
 
 /**
  *控制播放顺序
@@ -13,6 +14,8 @@ public class PlayListController {
     //当前使用的播放列表
     private static ArrayList<MusicInfo> mPlaylist = null;
     private static LinkedList<Integer> tempQuene = new LinkedList<>();
+
+    private static boolean isLast;
 
     private static int position = 0;
 
@@ -40,12 +43,12 @@ public class PlayListController {
             get = position - 1;
         }
         position = get;
-        return mPlaylist.get(position);
+        return getItem(position);
     }
 
 
     public static MusicInfo getNow(){
-        return mPlaylist.get(position);
+        return getItem(position);
     }
 
     /**
@@ -59,9 +62,29 @@ public class PlayListController {
             get = (position + 1) % mPlaylist.size();
         }
         position = get;
-        return mPlaylist.get(position);
+        return getItem(position);
     }
 
+
+    /**
+     * 下一曲
+     * @return music
+     */
+    public static MusicInfo getRandom(){
+        Integer get = 0;
+        //判断temp列表中是否有在排队数据
+        if ( (get = tempQuene.poll() ) == null ){
+            get = new Random().nextInt(mPlaylist.size());
+        }
+        position = get;
+        return getItem(position);
+    }
+
+
+
+    public static boolean isLast() {
+        return isLast;
+    }
 
     /**
      * 获取列表中position item
@@ -69,6 +92,12 @@ public class PlayListController {
      * @return
      */
     public static MusicInfo getItem(int position){
+        if (position == mPlaylist.size()-1){
+            isLast = true;
+        } else {
+            isLast = false;
+        }
+
         return mPlaylist.get(position);
     }
 

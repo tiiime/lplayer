@@ -22,7 +22,7 @@ import com.github.tiiime.lplayer.controller.PlayListController;
 import com.github.tiiime.lplayer.dialog.ChoosePlaylistDialog;
 import com.github.tiiime.lplayer.model.MusicInfo;
 import com.github.tiiime.lplayer.service.LPlayerService;
-import com.github.tiiime.lplayer.tool.MediaController;
+import com.github.tiiime.lplayer.controller.MediaController;
 import com.github.tiiime.lplayer.tool.MusicDBHelper;
 
 import java.util.ArrayList;

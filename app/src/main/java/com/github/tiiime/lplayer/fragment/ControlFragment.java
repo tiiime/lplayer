@@ -11,14 +11,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.github.tiiime.lplayer.R;
 import com.github.tiiime.lplayer.controller.PlayListController;
 import com.github.tiiime.lplayer.service.LPlayerService;
-import com.github.tiiime.lplayer.tool.MediaController;
+import com.github.tiiime.lplayer.controller.MediaController;
 import com.github.tiiime.lplayer.tool.MusicDBHelper;
 
 /**
@@ -35,6 +38,7 @@ public class ControlFragment extends Fragment implements View.OnClickListener{
     private Button next = null;//2
     private Button last = null;//3
     private Button find = null;
+    private Spinner mode = null;
 
     private Context mContext = null;
 
@@ -67,6 +71,7 @@ public class ControlFragment extends Fragment implements View.OnClickListener{
         next = (Button) view.findViewById(R.id.next);
         time = (TextView) view.findViewById(R.id.time);
         find = (Button) view.findViewById(R.id.find);
+        mode = (Spinner) view.findViewById(R.id.mode);
 
         pause.setOnClickListener(this);
         play.setOnClickListener(this);
@@ -74,6 +79,23 @@ public class ControlFragment extends Fragment implements View.OnClickListener{
         last.setOnClickListener(this);
         next.setOnClickListener(this);
         find.setOnClickListener(this);
+        String[] mItems = {"normal","loop","random"};
+        ArrayAdapter<String> spAdapter = new ArrayAdapter<String>(mContext,
+                R.layout.spinner_text, mItems);
+
+        mode.setAdapter(spAdapter);
+
+        mode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                MediaController.setPlayMode(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -142,6 +164,7 @@ public class ControlFragment extends Fragment implements View.OnClickListener{
                 dbHelper.findMusic();
                 PlayListController.setPlaylist(dbHelper.getList(MusicDBHelper.ALL_MUSIC));
                 break;
+
         }
         mContext.startService(intent);
     }
@@ -152,12 +175,10 @@ public class ControlFragment extends Fragment implements View.OnClickListener{
         @Override
         public void run() {
             MediaPlayer mediaPlayer = MediaController.getMediaPlayer();
-            if (mediaPlayer != null) {
-                int mCurrent = MediaController.getMediaPlayer()
-                        .getCurrentPosition();
-                seekBar.setProgress(mCurrent / 1000);
-
-            }
+            int mCurrent = mediaPlayer.getCurrentPosition();
+            int max = mediaPlayer.getDuration();
+            seekBar.setMax(max/1000);
+            seekBar.setProgress(mCurrent / 1000);
             mHandler.postDelayed(this, 1000);
 
         }

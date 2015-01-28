@@ -9,9 +9,10 @@ import android.util.Log;
 
 import com.github.tiiime.lplayer.controller.PlayListController;
 import com.github.tiiime.lplayer.model.MusicInfo;
-import com.github.tiiime.lplayer.tool.MediaController;
+import com.github.tiiime.lplayer.controller.MediaController;
+import com.github.tiiime.lplayer.model.PlayList;
 
-import static com.github.tiiime.lplayer.tool.MediaController.*;
+import static com.github.tiiime.lplayer.controller.MediaController.*;
 
 /**
  * 播放后台service
@@ -21,9 +22,9 @@ public class LPlayerService extends Service {
     private static MediaPlayer mediaPlayer = null;
     private static MusicInfo ing = new MusicInfo();
     /**
-     * 0---->stop
-     * 1---->playing
-     * -1--->pause
+     *  0---->stop
+     *  1---->playing
+     * -1---->pause
      */
     private static int playStat = 0;
 
@@ -31,6 +32,26 @@ public class LPlayerService extends Service {
     public void onCreate() {
         Log.v(TAG, "onCreate");
         super.onCreate();
+
+        MediaController.getMediaPlayer()
+                .setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                switch (getPlayMode()){
+                    case 0:
+                        if (!PlayListController.isLast()){
+                            mediaControl(OPERATE_NEXT);
+                        }
+                        break;
+                    case 1:
+                        mediaControl(OPERATE_NEXT);
+                        break;
+                    case 2:
+                        mediaControl(OPERATE_RANDOM);
+                        break;
+                }
+            }
+        });
     }
 
     @Override
@@ -96,6 +117,10 @@ public class LPlayerService extends Service {
             case OPERATE_LAST://
                 MusicInfo last = PlayListController.getLast();
                 MediaController.play(this,last);
+                break;
+            case OPERATE_RANDOM:
+                MusicInfo rand = PlayListController.getRandom();
+                MediaController.play(this,rand);
                 break;
         }
 

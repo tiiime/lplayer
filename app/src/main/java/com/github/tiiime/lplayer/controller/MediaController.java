@@ -1,4 +1,4 @@
-package com.github.tiiime.lplayer.tool;
+package com.github.tiiime.lplayer.controller;
 
 import android.content.Context;
 import android.media.AudioManager;
@@ -23,6 +23,7 @@ public class MediaController {
 
     public static final int OPERATE_NEXT = 2;
     public static final int OPERATE_LAST = 3;
+    public static final int OPERATE_RANDOM = 4;
 
 
     public static final String INTENT_TYPE = "type";
@@ -32,6 +33,20 @@ public class MediaController {
     public static final String INTENT_MUSICINFO = "musicinfo";
 
     private static MediaPlayer mediaPlayer = new MediaPlayer();
+
+    private static int playMode = 0;//播放模式
+                                    //正常
+                                    //列表循环
+                                    //随机
+
+
+    public static int getPlayMode() {
+        return playMode;
+    }
+
+    public static void setPlayMode(int playMode) {
+        MediaController.playMode = playMode;
+    }
 
     /**
      * get mediaplayer
