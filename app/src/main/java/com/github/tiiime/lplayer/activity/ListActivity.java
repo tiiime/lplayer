@@ -23,13 +23,18 @@ public class ListActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
-        Fragment fragment = new MusiclistFragment();
         Bundle b = getIntent().getExtras();
-        fragment.setArguments(b);
+        Fragment fragment = null;
 
-        getFragmentManager().beginTransaction()
-                .add(R.id.list_container, fragment)
-                .addToBackStack(null).commit();
+        fragment = getFragmentManager().findFragmentById(R.id.list_container);
+        if (fragment == null){
+            fragment = new MusiclistFragment();
+            fragment.setArguments(b);
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.list_container, fragment)
+                    .addToBackStack(null).commit();
+
+        }
 
     }
 

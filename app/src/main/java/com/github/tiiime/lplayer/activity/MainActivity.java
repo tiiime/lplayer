@@ -57,7 +57,7 @@ public class MainActivity extends BaseActivity {
         playlistFragment = new PlaylistFragment();
 
         getFragmentManager().beginTransaction().
-                add(R.id.fragment_container, musiclistFragment).commit();
+                replace(R.id.fragment_container, musiclistFragment).commit();
 
         controlFragment = (ControlFragment) getFragmentManager().
                 findFragmentById(R.id.control);
